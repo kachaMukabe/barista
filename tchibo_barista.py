@@ -10,7 +10,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 TOKEN = '1584064876:AAGmhdL48OZ8MZwYyYn36TlJg19pozBX70g'
-URL = ''
+URL = 'https://immense-fjord-98048.herokuapp.com/'
 PORT = int(os.environ.get('PORT', '8443'))
 DEVELOPER_CHAT_ID = 123456789
 
