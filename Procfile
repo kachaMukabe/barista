@@ -1,2 +1,1 @@
-
-worker: python tchibo_barista.py
+web: gunicorn app:server
