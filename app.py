@@ -28,7 +28,7 @@ def callback_query(call):
 def start(message):
     bot.send_message(message.chat.id, f'Hello, {message.from_user.first_name}. Welcome to Tchibo Coffee, can I take your order?')
 
-@bot.message_handler(commands=['/products'])
+@bot.message_handler(commands=['products'])
 def products(message):
     products = get_products()
     text = ""
