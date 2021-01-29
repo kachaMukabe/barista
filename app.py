@@ -34,7 +34,7 @@ def products(message):
         products = get_products()
         text = ""
         for product in products:
-            text += f" {product['title']}\n{product['price']['currency']} {product['price']['amount']}\n"
+            text += f"{product['image']['default']}\n {product['title']}\n{product['price']['currency']} {product['price']['amount']}\n"
         bot.send_message(message.chat.id, text, reply_markup=gen_product_markup(products))
     except Exception as e:
         print(e)
