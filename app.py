@@ -32,10 +32,11 @@ def start(message):
 def products(message):
     try:
         products = get_products()
-        text = ""
+        # text = ""
         for product in products:
-            text += f"{product['image']['default']}\n {product['title']}\n{product['price']['currency']} {product['price']['amount']}\n"
-        bot.send_message(message.chat.id, text, reply_markup=gen_product_markup(products))
+            text = f"{product['title']}\n{product['price']['currency']} {product['price']['amount']}\n"
+            bot.send_photo(message.chat.id, product['image']['default'], caption=text)
+        bot.send_message(message.chat.id, "Pick your poison", reply_markup=gen_product_markup(products))
     except Exception as e:
         print(e)
         bot.send_message(message.chat.id, e)
