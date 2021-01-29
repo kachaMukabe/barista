@@ -30,11 +30,15 @@ def start(message):
 
 @bot.message_handler(commands=['products'])
 def products(message):
-    products = get_products()
-    text = ""
-    for product in products:
-        text += f" {product['title']}\n{product['price']['currency']} {product['price']['amount']}\n"
-    bot.send_message(message.chat.id, "", reply_markup=gen_product_markup(products))
+    try:
+        products = get_products()
+        text = ""
+        for product in products:
+            text += f" {product['title']}\n{product['price']['currency']} {product['price']['amount']}\n"
+        bot.send_message(message.chat.id, text, reply_markup=gen_product_markup(products))
+    except Exception as e:
+        print(e)
+        bot.send_message(message.chat.id, e)
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
