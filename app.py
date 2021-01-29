@@ -1,16 +1,40 @@
 import os
-
+import requests
 from flask import Flask, request
 
 import telebot
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 TOKEN = '1584064876:AAGmhdL48OZ8MZwYyYn36TlJg19pozBX70g'
 bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
 
+def get_products():
+    res = requests.get("https://api.hackathon.tchibo.com/api/v1/products?per_page=2")
+    return res.json()["data"]
+
+def gen_product_markup(products):
+    markup = InlineKeyboardMarkup()
+    markup.row_width = 1
+    for product in products:
+        markup.add(InlineKeyboardButton(product['title'], callback_data=product['product_id']))
+    return markup
+
+@bot.callback_query_handler(func=lambda call:True)
+def callback_query(call):
+    bot.answer_callback_query(call.id, call.data)
+
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, f'Hello, {message.from_user.first_name}')
+    bot.send_message(message.chat.id, f'Hello, {message.from_user.first_name}. Welcome to Tchibo Coffee, can I take your order?')
+
+@bot.message_handler(commands=['/products'])
+def products(message):
+    products = get_products()
+    text = ""
+    for product in products:
+        text += f" {product['title']}\n{product['price']['currency']} {product['price']['amount']}\n"
+    bot.send_message(message.chat.id, "", reply_markup=gen_product_markup(products))
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
