@@ -13,6 +13,10 @@ def get_products():
     res = requests.get("https://api.hackathon.tchibo.com/api/v1/products?per_page=2")
     return res.json()["data"]
 
+def get_articles():
+    res = requests.get("https://api.hackathon.tchibo.com/api/v1/articles?per_page=2")
+    return res.json()["data"]
+
 def gen_product_markup(products):
     markup = InlineKeyboardMarkup()
     markup.row_width = 1
@@ -40,6 +44,18 @@ def products(message):
     except Exception as e:
         print(e)
         bot.send_message(message.chat.id, e)
+
+@bot.message_handler(commands=['articles'])
+def articles(message):
+    print(message)
+    try:
+        articles = get_articles()
+        for article in articles:
+            text = f""
+            bot.send_photo(message.chat.id, article['image']['default'], caption=article['title'])
+            bot.send_message(message.chat.id, article['description']['long'])
+    except Exception as e:
+        print(e)
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
