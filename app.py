@@ -6,9 +6,9 @@ from wit import Wit
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-TOKEN = '1584064876:AAGmhdL48OZ8MZwYyYn36TlJg19pozBX70g'
+TOKEN = os.environ["TELEGRAM_API"]
 bot = telebot.TeleBot(TOKEN)
-client = Wit("3DKWHQ3ZTNK27BOYH6DMFWG3WLQ7DXUW")
+client = Wit(os.environ["WIT_API_TOKEN"])
 server = Flask(__name__)
 
 def get_products(n):
