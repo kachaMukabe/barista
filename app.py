@@ -27,14 +27,17 @@ def handle_resp_from_wit(resp, message):
     if 'wit$greetings' in traits.keys():
         if traits['wit$greetings'][0]['confidence'] > 0.9:
             bot.reply_to(message, "Welcome to your personal Barista! \n What can I do for you today?")
+            return
     if 'wit$bye' in traits.keys():
         if traits['wit$bye'][0]['confidence'] > 0.9:
             bot.reply_to(message, "Goodbye for now! I'll see you later")
-    
+            return
     if intents[0]['name'] == 'get_products':
         value = entities['wit$search_query:search_query'][0]['value']
         if 'product' == value:
             pass
+    
+    bot.reply_to(message, "I cannot understand that yet ")
 
 
 
