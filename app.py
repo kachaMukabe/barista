@@ -19,6 +19,27 @@ def get_articles(n):
     res = requests.get(f"https://api.hackathon.tchibo.com/api/v1/articles?per_page={n}")
     return res.json()["data"]
 
+def handle_resp_from_wit(resp, message):
+    intents = resp['intents']
+    entities = resp['entities']
+    traits = resp['traits']
+
+    if 'wit$greetings' in traits.keys():
+        if traits['wit$greetings'][0]['confidence'] > 0.9:
+            bot.reply_to(message, "Welcome to your personal Barista! \n What can I do for you today?")
+    if 'wit$bye' in traits.keys():
+        if traits['wit$bye'][0]['confidence'] > 0.9:
+            bot.reply_to(message, "Goodbye for now! I'll see you later")
+    
+    if intents[0]['name'] == 'get_products':
+        value = entities['wit$search_query:search_query'][0]['value']
+        if 'product' == value:
+            pass
+
+
+
+
+
 def gen_product_markup(products):
     markup = InlineKeyboardMarkup()
     markup.row_width = 1
@@ -72,7 +93,8 @@ def articles(message):
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
     resp = client.message(message.text)
-    bot.reply_to(message, str(resp))
+    handle_resp_from_wit(resp, message)
+    
 
 
 @server.route(f'/{TOKEN}', methods=['POST'])
