@@ -1,20 +1,22 @@
 import os
 import requests
 from flask import Flask, request
+from wit import Wit
 
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 TOKEN = '1584064876:AAGmhdL48OZ8MZwYyYn36TlJg19pozBX70g'
 bot = telebot.TeleBot(TOKEN)
+client = Wit("3DKWHQ3ZTNK27BOYH6DMFWG3WLQ7DXUW")
 server = Flask(__name__)
 
-def get_products():
-    res = requests.get("https://api.hackathon.tchibo.com/api/v1/products?per_page=2")
+def get_products(n):
+    res = requests.get(f"https://api.hackathon.tchibo.com/api/v1/products?per_page={n}")
     return res.json()["data"]
 
-def get_articles():
-    res = requests.get("https://api.hackathon.tchibo.com/api/v1/articles?per_page=2")
+def get_articles(n):
+    res = requests.get(f"https://api.hackathon.tchibo.com/api/v1/articles?per_page={n}")
     return res.json()["data"]
 
 def gen_product_markup(products):
@@ -34,8 +36,13 @@ def start(message):
 
 @bot.message_handler(commands=['products'])
 def products(message):
+    num = message.text.split(' ')
     try:
-        products = get_products()
+        n = int(num[1])
+    except Exception as e:
+        n = 2
+    try:
+        products = get_products(n)
         # text = ""
         for product in products:
             text = f"{product['title']}\n{product['price']['currency']} {product['price']['amount']}\n"
@@ -48,8 +55,13 @@ def products(message):
 @bot.message_handler(commands=['articles'])
 def articles(message):
     print(message)
+    num = message.text.split(' ')
     try:
-        articles = get_articles()
+        n = int(num[1])
+    except Exception as e:
+        n = 2
+    try:
+        articles = get_articles(n)
         for article in articles:
             text = f""
             bot.send_photo(message.chat.id, article['image']['default'], caption=article['title'])
@@ -59,7 +71,8 @@ def articles(message):
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
-    bot.reply_to(message, message.text)
+    resp = client.message(message.text)
+    bot.reply_to(message, str(resp))
 
 
 @server.route(f'/{TOKEN}', methods=['POST'])
